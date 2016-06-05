@@ -1,0 +1,82 @@
+<!DOCTYPE HTML> 
+<html lang="en"> 
+<head>
+	<title>Click Battle</title>
+	<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+	<script>
+	var peer = new Peer({
+		key: 'x27qwxzxluwhfr',
+		debug: 3,
+		logFunction: function() {
+			console.log(arguments);
+		}
+	});
+	
+	var connectedPeers = {};
+	
+	peer.on('open', openConnection)
+	// Await connections from others
+	peer.on('connection', onConnect);
+	
+	function onConnect(dataConnection)
+	{
+		document.getElementById('theirID').innerHTML = 'Their ID: '+dataConnection.peer
+		connectedPeers = dataConnection
+		console.log(connectedPeers);
+		dataConnection.on('data', dataGot);
+	}
+	
+	function dataGot(data)
+	{
+		document.getElementById('theirScore').innerHTML = 'Their Score: '+data;
+	}
+	
+	
+	function openConnection(id)
+	{
+		document.getElementById('yourID').innerHTML = 'Your ID: '+id	
+	}
+	
+	function clickConnect()
+	{
+	 var requestedPeer = document.getElementById('theirIDType').value; 
+	  var c = peer.connect(requestedPeer, {
+        label: 'chat',
+        serialization: 'none',
+        metadata: {message: 'hi i want to chat with you!'}
+      });
+      c.on('open', function() {
+        onConnect(c);
+      });
+      c.on('error', function(err) { alert(err); });
+	}
+	
+	var i = 0;
+	function clickButton()
+	{
+		i=i+1;
+		connectedPeers.send(i);
+		document.getElementById('yourScore').innerHTML = 'Your Score: '+i;
+	}
+	
+	
+	
+	
+	
+	
+	window.onunload = window.onbeforeunload = function(e) {
+  if (!!peer && !peer.destroyed) {
+    peer.destroy();
+  }
+};
+	</script>
+</head>
+<body>
+	<h1 id='yourID'></h1>
+	<h1 id='theirID'></h1>
+	<input id='theirIDType'></input>
+	<button onclick='clickConnect()'>Connect</button>
+	<button onclick='clickButton()'>PRESS ME</button>
+	<p id='yourScore'>Your Score: </p>
+	<p id='theirScore'>Their Score:</p>
+</body>
