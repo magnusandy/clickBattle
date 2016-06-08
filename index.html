@@ -20,7 +20,8 @@
 	
 	function onConnect(dataConnection)
 	{
-		document.getElementById('theirID').innerHTML = 'Their ID: '+dataConnection.peer
+        document.getElementById('yourLink').style.display = 'none'; //hide the link box  
+		document.getElementById('theirID').innerHTML = 'Connected'
 		connectedPeers = dataConnection
 		console.log(connectedPeers);
 		dataConnection.on('data', dataGot);
@@ -34,13 +35,26 @@
 	
 	function openConnection(id)
 	{
-		document.getElementById('yourID').innerHTML = 'Your ID: '+id	
+        var idFromLink = getQueryVariable('id');
+        console.log(idFromLink)
+        if(idFromLink == false)//there is nothing in the address or it is malformed
+        {
+            document.getElementById('yourLink').style.display = 'inline'; //show the link box   
+            //load normally and generate link
+		               var linux = 'file:///home/magnusandy/Documents/Github/clickBattle/index.html?id='+id
+            console.log('Linux Link'+linux)
+            document.getElementById('yourLink').value= linux
+        }
+        else//there is a id in the address
+        {
+
+            clickConnect(idFromLink);
+        }
 	}
 	
-	function clickConnect()
+	function clickConnect(requestedPeer)
 	{
-	 var requestedPeer = document.getElementById('theirIDType').value; 
-	  var c = peer.connect(requestedPeer, {
+	    var c = peer.connect(requestedPeer, {
         label: 'chat',
         serialization: 'none',
         metadata: {message: 'hi i want to chat with you!'}
@@ -69,10 +83,32 @@
     peer.destroy();
   }
 };
+
+//functions
+function getQueryVariable(variable)
+	{
+		   var query = window.location.search.substring(0);
+           if(query.includes('?'))
+            {
+                query = query.substring(1)
+                console.log('here')
+		       var vars = query.split("&");
+		       for (var i=0;i<vars.length;i) {
+				       var pair = vars[i].split("=");
+				       if(pair[0] == variable){return pair[1];}
+		       }
+            }
+            else//there is no address variable
+            {
+                return(false);
+            }
+		        
+	}
 	</script>
 </head>
 <body>
 	<h1 id='yourID'></h1>
+    <input id='yourLink' style='display:none'></input>
 	<h1 id='theirID'></h1>
 	<input id='theirIDType'></input>
 	<button onclick='clickConnect()'>Connect</button>
