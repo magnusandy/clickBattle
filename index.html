@@ -1,9 +1,12 @@
+
 <!DOCTYPE HTML> 
 <html lang="en"> 
 <head>
 	<title>Click Battle</title>
 	<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
 	<script>
+    //TODO consider a 2way ready check, say your ready, and wait for a response before checking that you are ready
+    //TODO hide or disable buttons before connected
 	var peer = new Peer({
 		key: 'x27qwxzxluwhfr',
 		debug: 3,
@@ -13,6 +16,8 @@
 	});
 	
 	var connectedPeers = {};
+    var youReady = false;
+    var theyReady =false;
 	
 	peer.on('open', openConnection)
 	// Await connections from others
@@ -22,30 +27,37 @@
 	{
         document.getElementById('yourLink').style.display = 'none'; //hide the link box  
 		document.getElementById('theirID').innerHTML = 'Connected'
+        //TODO show im ready button
 		connectedPeers = dataConnection
-		console.log(connectedPeers);
 		dataConnection.on('data', dataGot);
 	}
 	
 	function dataGot(data)
 	{
-		document.getElementById('theirScore').innerHTML = 'Their Score: '+data;
+        if(data == 'ready')
+        {
+           theyReady = true;
+            ready();
+        }
+        else//data is clicks
+        {
+            document.getElementById('theirScore').innerHTML = 'Their Score: '+data;
+        }
 	}
 	
 	
 	function openConnection(id)
 	{
         var idFromLink = getQueryVariable('id');
-        console.log(idFromLink)
         if(idFromLink == false)//there is nothing in the address or it is malformed
         {
             document.getElementById('yourLink').style.display = 'inline'; //show the link box   
             //load normally and generate link
-		               var linux = 'file:///home/magnusandy/Documents/Github/clickBattle/index.html?id='+id
+		    var linux = 'file:///home/magnusandy/Documents/Github/clickBattle/index.html?id='+id
             console.log('Linux Link'+linux)
             document.getElementById('yourLink').value= linux
         }
-        else//there is a id in the address
+        else//there is a id in the address and you are connecting
         {
 
             clickConnect(idFromLink);
@@ -55,9 +67,9 @@
 	function clickConnect(requestedPeer)
 	{
 	    var c = peer.connect(requestedPeer, {
-        label: 'chat',
+        label: 'connect',
         serialization: 'none',
-        metadata: {message: 'hi i want to chat with you!'}
+        metadata: {message: 'lets Battle'}
       });
       c.on('open', function() {
         onConnect(c);
@@ -66,12 +78,51 @@
 	}
 	
 	var i = 0;
+
 	function clickButton()
 	{
 		i=i+1;
 		connectedPeers.send(i);
 		document.getElementById('yourScore').innerHTML = 'Your Score: '+i;
 	}
+
+    function readyButton()
+    {
+        youReady = true;
+        connectedPeers.send('ready');
+        ready();
+    }
+    
+    //checks if both are ready, and if so, starts the timer    
+    function ready()
+    {
+        if((youReady)&(theyReady))
+        {
+            document.getElementById('timerBackground').style.display = 'inline';
+            timer = document.getElementById('timer')
+            timer.style.display = 'inline';
+            setTimeout(function(){
+                timer.innerHTML = '2'
+                setTimeout(function(){
+                    timer.innerHTML = '1'
+                    setTimeout(function(){
+                        timer.innerHTML = 'GO!'
+                        setTimeout(function(){
+                        document.getElementById('timerBackground').style.display = 'none';    
+                        timer.style.display = 'none';
+                        //TODO startgame()
+                        }, 250);
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+            
+            
+
+        
+        }
+    }
+
+
 	
 	
 	
@@ -107,11 +158,12 @@ function getQueryVariable(variable)
 	</script>
 </head>
 <body>
+    <div id='timerBackground' style='width:100%; height:100%; position:absolute; top:0; left:0; background-color:black; opacity:0.2; display:none;'></div>
+    <h1 id='timer' style='position:absolute; top:20%; left:48%; font-size:400%; z-index:10; display:none;'>3</h1>
 	<h1 id='yourID'></h1>
     <input id='yourLink' style='display:none'></input>
 	<h1 id='theirID'></h1>
-	<input id='theirIDType'></input>
-	<button onclick='clickConnect()'>Connect</button>
+    <button onclick='readyButton()'>I'm Ready</button>
 	<button onclick='clickButton()'>PRESS ME</button>
 	<p id='yourScore'>Your Score: </p>
 	<p id='theirScore'>Their Score:</p>
