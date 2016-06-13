@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-navbar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+</style>
+<body style="background-color:#56A5EC">
+
+<!-- title page -->
+<div class="w3-container w3-center" style='padding-top:50px'>
+  <div class="w3-container w3-center" style='display:inline-block'>
+    <img src='img/logoNoText.png' style='max-width:100%'></img>
+    <h1 class="w3-jumbo">Click Battle</h1>
+    <div>
+        <input class="w3-input w3-border" type="text" style='float:left; width:calc(100% - 50px);'>
+        <button class="w3-btn" style='width:50px; height:40px; float:right;'><i class="fa fa-clipboard" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else { 
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+
+</body>
+</html>
+
