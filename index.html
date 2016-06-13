@@ -121,16 +121,14 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       c.on('error', function(err) { alert(err); });
 	}
 	
-	var i = 0;
-
 	function clickButton()
 	{
 		if(gameStarted == true)
 		{
-			i=i+1;
-			connectedPeers.send(i);
-			youScore = i;
-			document.getElementById('YouScore').innerHTML = '<strong>You: </strong>'+i;
+			youScore=youScore+1;
+			connectedPeers.send(youScore);
+			youScore = youScore;
+			document.getElementById('YouScore').innerHTML = '<strong>You: </strong>'+youScore;
 		}
 	}
 
@@ -189,15 +187,25 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 			if(elapsed <=0)
 			{
 				clearInterval(intervalID);
+				finalScores = 'Final Scores - You: '+youScore+' Them: '+theyScore;
 				if(youScore > theyScore)
 				{
-					alert('winner')
+					alert('You win! '+finalScores)
 				}
 				else
 				{
-					alert('loser')
+					alert('You Lose! '+finalScores)
 				}
-				
+				gameStarted = false;
+				theyReady = false;
+				youReady= false;
+				youScore=0;
+				theyScore=0;
+				document.getElementById('ThemScore').innerHTML = '<strong>Them: </strong>'+0;
+				document.getElementById('YouScore').innerHTML = '<strong>You: </strong>'+0;
+				$('#readyButton').removeClass('w3-green');
+				$('#readyButton').addClass('w3-red');
+				$('#readyButton').text('Ready?')
 			}
 		}
 		, 100);
