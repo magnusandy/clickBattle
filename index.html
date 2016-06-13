@@ -58,6 +58,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 	var connectedPeers = {};
     var youReady = false;
     var theyReady =false;
+	var gameStarted = false;
+	var theyScore=0;
+	var youScore=0;
 	
 	peer.on('open', openConnection)
 	// Await connections from others
@@ -65,9 +68,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 	
 	function onConnect(dataConnection)
 	{
-        document.getElementById('yourLink').style.display = 'none'; //hide the link box  
-		document.getElementById('theirID').innerHTML = 'Connected'
-        //TODO show im ready button
+        changePage();
 		connectedPeers = dataConnection
 		dataConnection.on('data', dataGot);
 	}
@@ -81,7 +82,8 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         }
         else//data is clicks
         {
-            document.getElementById('theirScore').innerHTML = 'Their Score: '+data;
+			theyScore = data;
+            document.getElementById('ThemScore').innerHTML = '<strong>Them: </strong>'+data;
         }
 	}
 	
@@ -123,16 +125,23 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
 	function clickButton()
 	{
-		i=i+1;
-		connectedPeers.send(i);
-		document.getElementById('yourScore').innerHTML = 'Your Score: '+i;
+		if(gameStarted == true)
+		{
+			i=i+1;
+			connectedPeers.send(i);
+			youScore = i;
+			document.getElementById('YouScore').innerHTML = '<strong>You: </strong>'+i;
+		}
 	}
 
     function readyButton()
     {
+	    if(gameStarted == false)
+		{
         youReady = true;
         connectedPeers.send('ready');
         ready();
+		}
     }
     
     //checks if both are ready, and if so, starts the timer    
@@ -148,11 +157,11 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
                 setTimeout(function(){
                     timer.innerHTML = '1'
                     setTimeout(function(){
-                        timer.innerHTML = 'GO!'
+                        timer.innerHTML = '0'
                         setTimeout(function(){
                         document.getElementById('timerBackground').style.display = 'none';    
                         timer.style.display = 'none';
-                        //TODO startgame()
+                        startGame();
                         }, 250);
                     }, 1000);
                 }, 1000);
@@ -163,6 +172,38 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         
         }
     }
+	
+	function startGame()
+	{
+		gameStarted = true;
+		var start = new Date().getTime(),
+		elapsed = '0.0';
+
+		var intervalID = window.setInterval(function()
+		{
+			var time = new Date().getTime() - start;
+			elapsed = Math.floor(time / 100) / 10;
+			elapsed = Number((10.0 - elapsed).toFixed(1));
+			if(Math.round(elapsed) == elapsed) { elapsed += '.0'; }
+			$('#Timer').html('<strong>Time Left: </strong>'+elapsed);
+			if(elapsed <=0)
+			{
+				clearInterval(intervalID);
+				if(youScore > theyScore)
+				{
+					alert('winner')
+				}
+				else
+				{
+					alert('loser')
+				}
+				
+			}
+		}
+		, 100);
+		//create timer for 10 seconds
+		//
+	}
 
 //functions
 function getQueryVariable(variable)
@@ -196,10 +237,12 @@ function readyButtonClicked()
 	$('#readyButton').removeClass('w3-red');
 	$('#readyButton').addClass('w3-green');
 	$('#readyButton').text('Ready!')
+	readyButton();
 }
 </script>
 <body style="background-color:#56A5EC">
-
+<div id='timerBackground' style='width:100%; height:100%; position:absolute; top:0; left:0; background-color:black; opacity:0.2; display:none;'></div>
+<h1 id='timer' style='position:absolute; top:40%; left:48%; font-size:400%; z-index:10; display:none;'>3</h1>
 <!-- title page -->
 <div id='titlePage' class="w3-container w3-center" style='padding-top:50px'>
   <div class="w3-container w3-center" style='display:inline-block'>
@@ -207,20 +250,25 @@ function readyButtonClicked()
     <h1 class="w3-jumbo">Click Battle</h1>
     <div>
         <input id='yourLink' class="w3-input w3-border" type="text" style='float:left; width:calc(100% - 50px);'>
-        <button onclick='changePage()' class="w3-btn" style='width:50px; height:40px; float:right;'><i class="fa fa-clipboard" aria-hidden="true"></i></button>
+        <button class="w3-btn" style='width:50px; height:40px; float:right;'><i class="fa fa-clipboard" aria-hidden="true"></i></button>
     </div>
   </div>
 </div>
 
 <!-- game page-->
 <div id='gamePage' class="w3-container w3-center" style='padding-top:50px; display:none'>
+
+	<!--Connected Message-->
+	<div class='w3-row'>
+		<h1>Connected to Opponent</h1>
+	</div>
 	<!--Timer and Score Row-->
 	<div class="w3-row">
 	  <div class="w3-container w3-third">
 		<h2 id='YouScore'><strong>You: </strong>0</h2> 
 	  </div>
 	  <div class="w3-container w3-third">
-		<h2 id='Timer'><strong>Time Left: </strong>10:00</h2> 
+		<h2 id='Timer'><strong>Time Left: </strong>10.0</h2> 
 	  </div>
 	  <div class="w3-container w3-third">
 		<h2 id='ThemScore'><strong>Them: </strong>0</h2> 
@@ -232,7 +280,7 @@ function readyButtonClicked()
 	</div>
 		<!--Ready Button-->
 	<div class='w3-row w3-padding-64'>
-		<button id='gameButton' onclick='' class ='button' ></button>
+		<button id='gameButton' onclick='clickButton()' class ='button' ></button>
 	</div>
 </div>
 
