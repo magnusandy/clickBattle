@@ -1,20 +1,14 @@
-<!DOCTYPE html>
-<html>
-<title>W3.CSS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!DOCTYPE HTML> 
+<html lang="en"> 
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
-<style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
-.w3-navbar,h1,button {font-family: "Montserrat", sans-serif}
-.fa-anchor,.fa-coffee {font-size:200px}
+	<title>Click Battle</title>
+	<style>
 .button {
   display: inline-block;
-  padding: 60px 90px;
+  padding: 50px 70px;
   font-size: 24px;
   cursor: pointer;
   text-align: center;
@@ -22,31 +16,23 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   outline: none;
   color: #fff;
   background-color: #4CAF50;
-  border-style: none none inset none;
-  border-color: black;
+  border: none;
   border-radius: 100%;
-  border-width: 2px;
-  box-shadow: 0 16px #367c3a;
+  box-shadow: 0 10px #999;
 }
 
 .button:hover {background-color: #3e8e41}
 
 .button:active {
   background-color: #3e8e41;
-  box-shadow: 0 6px #1f4720;
-  transform: translateY(10px);
+  box-shadow: 0 4px #666;
+  transform: translateY(6px);
 }
 </style>
-<script>
-//Destroy connection on page unload
-	window.onunload = window.onbeforeunload = function(e) {
-  if (!!peer && !peer.destroyed) {
-    peer.destroy();
-  }
-};
-
-//TODO consider a 2way ready check, say your ready, and wait for a response before checking that you are ready
-//TODO hide or disable buttons before connected
+	<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+	<script>
+    //TODO consider a 2way ready check, say your ready, and wait for a response before checking that you are ready
+    //TODO hide or disable buttons before connected
 	var peer = new Peer({
 		key: 'x27qwxzxluwhfr',
 		debug: 3,
@@ -91,13 +77,14 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         var idFromLink = getQueryVariable('id');
         if(idFromLink == false)//there is nothing in the address or it is malformed
         {
+            document.getElementById('yourLink').style.display = 'inline'; //show the link box   
             //load normally and generate link
 		    var linux = 'file:///home/magnusandy/Documents/Github/clickBattle/index.html?id='+id
 			var win = 'file:///C:/Users/Andrew%20Magnus/Documents/GitHub/clickBattle/index.html?id='+id
             var github = 'magnusandy.github.io/clickBattle/index.html?id='+id
             console.log('Linux Link '+linux)
 			console.log('Win Link '+win)
-			$('#yourLink').val(github);
+            document.getElementById('yourLink').value= github
         }
         else//there is a id in the address and you are connecting
         {
@@ -164,6 +151,19 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         }
     }
 
+
+	
+	
+	
+	
+	
+	
+	window.onunload = window.onbeforeunload = function(e) {
+  if (!!peer && !peer.destroyed) {
+    peer.destroy();
+  }
+};
+
 //functions
 function getQueryVariable(variable)
 	{
@@ -184,59 +184,12 @@ function getQueryVariable(variable)
             }
 		        
 	}
-//hide the title page and show the game page
-function changePage()
-{
-	$('#titlePage').css('display', 'none');
-	$('#gamePage').css('display', 'block');
-}
-
-function readyButtonClicked()
-{
-	$('#readyButton').removeClass('w3-red');
-	$('#readyButton').addClass('w3-green');
-	$('#readyButton').text('Ready!')
-}
-</script>
+	</script>
+</head>
 <body style="background-color:#56A5EC">
+<div class="w3-container w3-center w3-padding-32">
+	<img class='' src='img/logo.png' style='max-width:100%; max-height:100%;'></img>
+    <input class="w3-input w3-border-0" id='yourLink' style='max-width:550px'></input>
 
-<!-- title page -->
-<div id='titlePage' class="w3-container w3-center" style='padding-top:50px'>
-  <div class="w3-container w3-center" style='display:inline-block'>
-    <img src='img/logoNoText.png' style='max-width:100%'></img>
-    <h1 class="w3-jumbo">Click Battle</h1>
-    <div>
-        <input id='yourLink' class="w3-input w3-border" type="text" style='float:left; width:calc(100% - 50px);'>
-        <button onclick='changePage()' class="w3-btn" style='width:50px; height:40px; float:right;'><i class="fa fa-clipboard" aria-hidden="true"></i></button>
-    </div>
-  </div>
 </div>
-
-<!-- game page-->
-<div id='gamePage' class="w3-container w3-center" style='padding-top:50px; display:none'>
-	<!--Timer and Score Row-->
-	<div class="w3-row">
-	  <div class="w3-container w3-third">
-		<h2 id='YouScore'><strong>You: </strong>0</h2> 
-	  </div>
-	  <div class="w3-container w3-third">
-		<h2 id='Timer'><strong>Time Left: </strong>10:00</h2> 
-	  </div>
-	  <div class="w3-container w3-third">
-		<h2 id='ThemScore'><strong>Them: </strong>0</h2> 
-	  </div>
-	</div>
-	<!--Ready Button-->
-	<div class='w3-row w3-padding-16'>
-		<button id='readyButton' onclick='readyButtonClicked()' class ='w3-border w3-border-black w3-xlarge w3-btn w3-red' >Ready?</button>
-	</div>
-		<!--Ready Button-->
-	<div class='w3-row w3-padding-64'>
-		<button id='gameButton' onclick='' class ='button' ></button>
-	</div>
-</div>
-
-
 </body>
-</html>
-
