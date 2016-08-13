@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>W3.CSS</title>
+<title>Click Battle</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
@@ -54,25 +54,25 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 			console.log(arguments);
 		}
 	});
-	
+
 	var connectedPeers = {};
     var youReady = false;
     var theyReady =false;
 	var gameStarted = false;
 	var theyScore=0;
 	var youScore=0;
-	
+
 	peer.on('open', openConnection)
 	// Await connections from others
 	peer.on('connection', onConnect);
-	
+
 	function onConnect(dataConnection)
 	{
         changePage();
 		connectedPeers = dataConnection
 		dataConnection.on('data', dataGot);
 	}
-	
+
 	function dataGot(data)
 	{
         if(data == 'ready')
@@ -86,8 +86,8 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
             document.getElementById('ThemScore').innerHTML = '<strong>Them: </strong>'+data;
         }
 	}
-	
-	
+
+
 	function openConnection(id)
 	{
         var idFromLink = getQueryVariable('id');
@@ -107,7 +107,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
             clickConnect(idFromLink);
         }
 	}
-	
+
 	function clickConnect(requestedPeer)
 	{
 	    var c = peer.connect(requestedPeer, {
@@ -120,7 +120,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       });
       c.on('error', function(err) { alert(err); });
 	}
-	
+
 	function clickButton()
 	{
 		if(gameStarted == true)
@@ -141,8 +141,8 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         ready();
 		}
     }
-    
-    //checks if both are ready, and if so, starts the timer    
+
+    //checks if both are ready, and if so, starts the timer
     function ready()
     {
         if((youReady)&(theyReady))
@@ -157,20 +157,20 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
                     setTimeout(function(){
                         timer.innerHTML = '0'
                         setTimeout(function(){
-                        document.getElementById('timerBackground').style.display = 'none';    
+                        document.getElementById('timerBackground').style.display = 'none';
                         timer.style.display = 'none';
                         startGame();
                         }, 250);
                     }, 1000);
                 }, 1000);
             }, 1000);
-            
-            
 
-        
+
+
+
         }
     }
-	
+
 	function startGame()
 	{
 		gameStarted = true;
@@ -190,11 +190,11 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 				finalScores = 'Final Scores - You: '+youScore+' Them: '+theyScore;
 				if(youScore > theyScore)
 				{
-					alert('You win! '+finalScores)
+          openGameOverModal(finalScores, 'You Win!');
 				}
 				else
 				{
-					alert('You Lose! '+finalScores)
+          openGameOverModal(finalScores, 'You Lose!');
 				}
 				gameStarted = false;
 				theyReady = false;
@@ -212,6 +212,13 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 		//create timer for 10 seconds
 		//
 	}
+  //Opens the ending game modal display, takes 2 parameters, one for the score and one for the message to be displayed
+  function openGameOverModal(score, message)
+  {
+    $('#gameOver').show();
+    $('#winLose').text(message);
+    $('#score').text(score);
+  }
 
 //functions
 function getQueryVariable(variable)
@@ -231,7 +238,7 @@ function getQueryVariable(variable)
             {
                 return(false);
             }
-		        
+
 	}
 //hide the title page and show the game page
 function changePage()
@@ -273,26 +280,34 @@ function readyButtonClicked()
 	<!--Timer and Score Row-->
 	<div class="w3-row">
 	  <div class="w3-container w3-third">
-		<h2 id='YouScore'><strong>You: </strong>0</h2> 
+		<h2 id='YouScore'><strong>You: </strong>0</h2>
 	  </div>
 	  <div class="w3-container w3-third">
-		<h2 id='Timer'><strong>Time Left: </strong>10.0</h2> 
+		<h2 id='Timer'><strong>Time Left: </strong>10.0</h2>
 	  </div>
 	  <div class="w3-container w3-third">
-		<h2 id='ThemScore'><strong>Them: </strong>0</h2> 
+		<h2 id='ThemScore'><strong>Them: </strong>0</h2>
 	  </div>
 	</div>
 	<!--Ready Button-->
 	<div class='w3-row w3-padding-16'>
 		<button id='readyButton' onclick='readyButtonClicked()' class ='w3-border w3-border-black w3-xlarge w3-btn w3-red' >Ready?</button>
 	</div>
-		<!--Ready Button-->
+		<!--Game Button-->
 	<div class='w3-row w3-padding-64'>
 		<button id='gameButton' onclick='clickButton()' class ='button' ></button>
 	</div>
 </div>
-
+<!-- Game over Modal-->
+<div id="gameOver" class="w3-modal">
+  <div class="w3-modal-content">
+    <div class="w3-container">
+      <span onclick="$('#gameOver').hide()" class="w3-closebtn">&times;</span>
+      <p id="winLose"></p>
+      <p id="score"></p>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
-
